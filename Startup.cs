@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Bondane_Carmen_Lab2.Data;
 using Microsoft.EntityFrameworkCore;
 using Bondane_Carmen_Lab2.Hubs;
+using Microsoft.AspNetCore.Identity;
 
 namespace Bondane_Carmen_Lab2
 {
@@ -26,6 +27,17 @@ namespace Bondane_Carmen_Lab2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<IdentityOptions>(options => {
+
+                //lungimea minima a parolei sa fie de min 8 caractere
+                options.Password.RequiredLength = 8;
+
+                // accesul unui utilizator sa fie blocat dupa 3 incercari esuate de autentificare
+                options.Lockout.MaxFailedAccessAttempts = 3;
+
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            });
             services.AddControllersWithViews();
             services.AddDbContext<LibraryContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddSignalR();
